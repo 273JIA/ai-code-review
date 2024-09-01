@@ -120,7 +120,7 @@ public class OpenAiCodeReview {
         git.add().addFilepattern(dateFolderName+"/"+fileName).call();
         git.commit().setMessage("Add new file").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""));
-        return "https://github.com/273JIA/ai-code-review-log/blob/master"+dateFolderName+"/"+fileName;
+        return "https://github.com/273JIA/ai-code-review-log/blob/master/"+dateFolderName+"/"+fileName;
     }
 
     private static String generateRandomString(int length) {
