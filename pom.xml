@@ -8,6 +8,7 @@
     <artifactId>openai-code-review</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>openai-code-review-sdk</module>
         <module>openai-code-review-test</module>
@@ -109,4 +110,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
