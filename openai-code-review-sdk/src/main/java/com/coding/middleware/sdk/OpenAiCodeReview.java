@@ -5,17 +5,25 @@ import com.coding.middleware.sdk.domain.model.Model;
 import com.coding.middleware.sdk.infrastructure.openai.dto.ChatCompletionRequestDTO;
 import com.coding.middleware.sdk.infrastructure.openai.dto.ChatCompletionSyncResponseDTO;
 import com.coding.middleware.sdk.types.utils.BearerTokenUtils;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class OpenAiCodeReview {
     public static void main(String[] args) throws Exception {
 
-        System.out.println("测试执行");
+        System.out.println("openai 代码评审，测试执行");
+        String token = System.getenv("GITHUB_TOKEN");
+        if(null==token||token.isEmpty()){
+            throw new RuntimeException("Token is null");
+        }
 
         // 1. 代码检出
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD~1", "HEAD");
@@ -40,6 +48,8 @@ public class OpenAiCodeReview {
         String log = codeReview(String.valueOf(diffCode));
         System.out.println("code review: "+ log);
 
+        //3. 写入评审日志
+        writeLog(token,log);
     }
 
     private static String codeReview(String diffCode) throws Exception {
@@ -86,6 +96,42 @@ public class OpenAiCodeReview {
 
         ChatCompletionSyncResponseDTO response = JSON.parseObject(content.toString(), ChatCompletionSyncResponseDTO.class);
         return response.getChoices().get(0).getMessage().getContent();
+
+    }
+
+    private static String writeLog(String token,String log) throws Exception {
+        Git git = Git.cloneRepository()
+                .setURI("https://github.com/273JIA/ai-code-review-log")
+                .setDirectory(new File("repo"))
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""))
+                .call();
+        String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        File dateFolder = new File("repo/"+dateFolderName);
+        if(!dateFolder.exists()){
+            dateFolder.mkdirs();
+        }
+        String fileName = generateRandomString(12)+".md";
+        File newFile = new File(dateFolder,fileName);
+        try(FileWriter writer = new FileWriter(newFile)){
+            writer.write(log);
+        }
+
+        git.add().addFilepattern(dateFolderName+"/"+fileName).call();
+        git.commit().setMessage("Add new file").call();
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""));
+        return "https://github.com/273JIA/ai-code-review-log/blob/master"+dateFolderName+"/"+fileName;
+    }
+
+    private static String generateRandomString(int length) {
+
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return sb.toString();
+
 
     }
 }
