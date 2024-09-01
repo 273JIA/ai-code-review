@@ -5,8 +5,8 @@ import com.coding.middleware.sdk.domain.model.Model;
 import com.coding.middleware.sdk.infrastructure.openai.dto.ChatCompletionRequestDTO;
 import com.coding.middleware.sdk.infrastructure.openai.dto.ChatCompletionSyncResponseDTO;
 import com.coding.middleware.sdk.types.utils.BearerTokenUtils;
+import com.coding.middleware.sdk.types.utils.WXAccessTokenUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.*;
@@ -51,6 +51,93 @@ public class OpenAiCodeReview {
         //3. 写入评审日志
         String logUrl = writeLog(token,log);
         System.out.println(logUrl);
+
+        //4. 消息通知
+        System.out.println("push message: "+logUrl);
+        pushMessage(logUrl);
+    }
+
+    private static void pushMessage(String logUrl){
+        String accessToken = WXAccessTokenUtils.getAccessToken();
+        System.out.println(accessToken);
+
+        Message message = new Message();
+        message.put("project","big-market");
+        message.put("review",logUrl);
+        message.setUrl(logUrl);
+
+        String url = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+        sendPostRequest(url, JSON.toJSONString(message));
+    }
+
+    public static class Message {
+        private String touser = "or0Ab6ivwmypESVp_bYuk92T6SvU";
+        private String template_id = "mKhGjV7UAV7Se9_byoPrgRlNfgJac8ZAfLnK8hyGmTQ";
+        private String url = "https://github.com/fuzhengwei/openai-code-review-log/blob/master/2024-07-27/Wzpxr6j1JY9k.md";
+        private Map<String, Map<String, String>> data = new HashMap<>();
+
+        public void put(String key, String value) {
+            data.put(key, new HashMap<String, String>() {
+                {
+                    put("value", value);
+                }
+            });
+        }
+
+        public String getTouser() {
+            return touser;
+        }
+
+        public void setTouser(String touser) {
+            this.touser = touser;
+        }
+
+        public String getTemplate_id() {
+            return template_id;
+        }
+
+        public void setTemplate_id(String template_id) {
+            this.template_id = template_id;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Map<String, Map<String, String>> getData() {
+            return data;
+        }
+
+        public void setData(Map<String, Map<String, String>> data) {
+            this.data = data;
+        }
+    }
+
+    private static void sendPostRequest(String urlString, String jsonBody) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+                String response = scanner.useDelimiter("\\A").next();
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static String codeReview(String diffCode) throws Exception {
