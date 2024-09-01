@@ -49,7 +49,8 @@ public class OpenAiCodeReview {
         System.out.println("code review: "+ log);
 
         //3. 写入评审日志
-        writeLog(token,log);
+        String logUrl = writeLog(token,log);
+        System.out.println(logUrl);
     }
 
     private static String codeReview(String diffCode) throws Exception {
@@ -101,7 +102,7 @@ public class OpenAiCodeReview {
 
     private static String writeLog(String token,String log) throws Exception {
         Git git = Git.cloneRepository()
-                .setURI("https://github.com/273JIA/ai-code-review-log")
+                .setURI("https://github.com/273JIA/ai-code-review-log.git")
                 .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""))
                 .call();
