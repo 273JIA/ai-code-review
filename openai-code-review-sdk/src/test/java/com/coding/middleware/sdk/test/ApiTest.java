@@ -114,7 +114,7 @@ public class ApiTest {
     public static class Message {
         private String touser = "o-Mm96A397U5He6vU11TiinJTl5Y";
         private String template_id = "u0awgUgJEtIGKoo5Yk-vqKih1M5NiR-XOuUTceDIeSs";
-        private String url = "https://github.com/273JIA/ai-code-review-log/blob/main/2024-09-01/QXbFoCzM8j7y.md";
+        private String url = "https://github.com/273JIA/ai-code-review-log/blob/main/2024-09-01/ft8CiEd5n7M0.md";
         private Map<String, Map<String, String>> data = new HashMap<>();
 
         public void put(String key, String value) {
