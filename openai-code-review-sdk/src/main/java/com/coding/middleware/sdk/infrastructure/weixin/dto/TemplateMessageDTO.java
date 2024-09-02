@@ -6,7 +6,7 @@ import java.util.Map;
 public class TemplateMessageDTO {
 
     private String touser = "o-Mm96A397U5He6vU11TiinJTl5Y";
-    private String template_id = "u0awgUgJEtIGKoo5Yk-vqKih1M5NiR-XOuUTceDIeSs";
+    private String template_id = "xlD1y6XW9ibQAs09cFvjtHeAac-zkwDhTK05-hhYrpE";
     private String url = "https://weixin.qq.com";
     private Map<String, Map<String, String>> data = new HashMap<>();
 
