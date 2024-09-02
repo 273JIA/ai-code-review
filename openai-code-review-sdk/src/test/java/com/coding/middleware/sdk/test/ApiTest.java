@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class ApiTest {
+
     public static void main(String[] args) {
         String apiKeySecret = "e4404acf1f11876c543a09b42e9ad811.vUMBoCLjjlg8CsIB";
         String token = BearerTokenUtils.getToken(apiKeySecret);
@@ -114,7 +115,7 @@ public class ApiTest {
     public static class Message {
         private String touser = "o-Mm96A397U5He6vU11TiinJTl5Y";
         private String template_id = "u0awgUgJEtIGKoo5Yk-vqKih1M5NiR-XOuUTceDIeSs";
-        private String url = "https://github.com/273JIA/ai-code-review-log/blob/main/2024-09-01/ft8CiEd5n7M0.md";
+        private String url = "https://github.com/273JIA/ai-code-review-log/blob/main/2024-09-01/Ri1a9A8o4HXI.md";
         private Map<String, Map<String, String>> data = new HashMap<>();
 
         public void put(String key, String value) {
