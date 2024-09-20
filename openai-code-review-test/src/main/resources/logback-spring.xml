@@ -102,13 +102,6 @@
         <logger name="com.nmys.view" level="debug"/>
     </springProfile>
 
-    <appender name="CUSTOM" class="com.coding.monitor.sdk.appender.CustomAppender">
-        <systemName>big-market</systemName>
-        <groupId>cn.bugstack</groupId>
-        <host>127.0.0.1</host>
-        <port>16379</port>
-    </appender>
-
     <root level="info">
         <appender-ref ref="CUSTOM"/>
 
